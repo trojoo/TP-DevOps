@@ -1,5 +1,5 @@
 
-from ..src.main import validar_respuesta
+from src.main import validar_respuesta
 
 def test_validar_respuesta():
     opciones = ["A", "B", "C", "D"]
