@@ -1,1 +1,2 @@
 pytest
+newrelic==8.12.0.0
