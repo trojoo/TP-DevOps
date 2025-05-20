@@ -10,6 +10,7 @@ services:
     environment:
       - NEW_RELIC_LICENSE_KEY=${NEW_RELIC_LICENSE_KEY}
       - NEW_RELIC_APP_NAME=tp-devops
+      - NEW_RELIC_CONFIG_FILE=/app/newrelic.ini
     volumes:
       - .:/app
     restart: unless-stopped
