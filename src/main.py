@@ -73,6 +73,7 @@ def iniciar_juego():
     print(f"{nombre_jugador}, tu puntuación fue de: ")
     print(f"Respuestas correctas: {correctas}")
     print(f"Respuestas incorrectas: {incorrectas}")
+    
 
 if __name__ == "__main__":
     iniciar_juego()
