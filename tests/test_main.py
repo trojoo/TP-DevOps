@@ -1,5 +1,5 @@
 import pytest
-from app import app as flask_app
+from main import app as flask_app
 
 @pytest.fixture
 def app():
@@ -58,3 +58,8 @@ def test_delete_book(client):
     # Verificar que ya no existe
     response = client.get('/books/2')
     assert response.status_code == 404
+
+def test_error_endpoint(client):
+    response = client.get('/error')
+    assert response.status_code == 500
+    assert b"Internal Server Error" in response.data   

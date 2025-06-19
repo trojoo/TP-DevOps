@@ -72,6 +72,14 @@ def delete_book(book_id):
         return jsonify({"message": "Libro eliminado correctamente"}), 200
     return jsonify({"error": "Libro no encontrado"}), 404
 
+# Endpoint para generar errores intencionales (para pruebas de monitorización)
+@app.route('/error', methods=['GET'])
+def trigger_error():
+    # Generar una excepción de división por cero
+    result = 1 / 0
+    return jsonify({"result": result}), 200
+        
+
 if __name__ == '__main__':
     env = os.getenv('FLASK_ENV', 'development')
     
