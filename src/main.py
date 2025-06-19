@@ -4,6 +4,7 @@ LETRAS = ['A', 'B', 'C', 'D']
 
 def obtener_preguntas():
     return [
+        
         {
             "pregunta": "¿Cuál es la capital de Francia?",
             "opciones": ["Madrid", "París", "Roma", "Berlín"],
