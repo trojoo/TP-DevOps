@@ -5,7 +5,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: book-api:compose
+      args:
+        - APP_VERSION=1.0.0  # Versión específica
+    image: tu-usuario/book-api:1.0.0  # Tag específico
     container_name: book-service
     ports:
       - "5000:5000"
