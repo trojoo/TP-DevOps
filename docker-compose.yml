@@ -1,16 +1,40 @@
-version: "3.13.0"
+version: '3.8'
 
 services:
-  app:
+  book-api:
     build:
       context: .
       dockerfile: Dockerfile
+    image: book-api:compose
+    container_name: book-service
     ports:
       - "5000:5000"
     environment:
-      - NEW_RELIC_LICENSE_KEY=${NEW_RELIC_LICENSE_KEY}
-      - NEW_RELIC_APP_NAME=tp-devops
-      - NEW_RELIC_CONFIG_FILE=/app/newrelic.ini
-    volumes:
-      - .:/app
+      - FLASK_ENV=production
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    networks:
+      - book-network
+
+  # Servicio opcional para ejecutar pruebas (ejecutar manualmente)
+  test-runner:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: book-api:compose
+    container_name: test-container
+    command: ["pytest", "test_app.py", "-v"]
+    depends_on:
+      book-api:
+        condition: service_healthy
+    networks:
+      - book-network
+
+networks:
+  book-network:
+    driver: bridge

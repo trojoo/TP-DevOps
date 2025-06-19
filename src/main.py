@@ -73,4 +73,9 @@ def delete_book(book_id):
     return jsonify({"error": "Libro no encontrado"}), 404
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    env = os.getenv('FLASK_ENV', 'development')
+    
+    # Activa debug solo en desarrollo
+    debug_mode = (env == 'development')
+    
+    app.run(host='0.0.0.0', port=5000, debug=debug_mode)
