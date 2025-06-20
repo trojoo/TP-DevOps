@@ -19,7 +19,9 @@ app = Flask(__name__)
 # Base de datos en memoria
 books = [
     {"id": 1, "title": "El Principito", "author": "Antoine de Saint-Exupéry"},
-    {"id": 2, "title": "Cien años de soledad", "author": "Gabriel García Márquez"}
+    {"id": 2, "title": "Cien años de soledad", "author": "Gabriel García Márquez"},
+    {"id": 3, "title": "El Peregrino", "author": "Paulo Coelho"},
+    {"id": 4, "title": "Big data con python: Recolección, almacenamiento y proceso", "author": "Adrián Riesco Rodríguez,"}
 ]
 next_id = 3
 
