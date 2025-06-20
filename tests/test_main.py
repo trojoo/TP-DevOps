@@ -1,12 +1,13 @@
 import pytest
 import sys
 import os
-import main  # Import the main module to reset state
 
 # Añadir src al path para importaciones
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
 
-from main import app as flask_app
+# Import from src package instead of directly
+from src import main  # Import the main module to reset state
+from src.main import app as flask_app  # Import app from src.main
 
 @pytest.fixture(autouse=True)
 def reset_state():
@@ -69,6 +70,7 @@ def test_update_book(client):
     assert response.json['title'] == "El Principito (Edición Especial)"
 
 def test_delete_book(client):
+    # We delete book with id=2 (Cien años de soledad)
     response = client.delete('/books/2')
     assert response.status_code == 200
     assert "eliminado" in response.json['message']
