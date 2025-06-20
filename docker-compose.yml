@@ -1,13 +1,13 @@
 version: '3.8'
 
 services:
-  book-api:
+  tp-devops:
     build:
       context: .
       dockerfile: Dockerfile
       args:
         - APP_VERSION=1.0.0  # Versión específica
-    image: gonza/book-api:v1.0.0  # Tag específico
+    image: gonza/tp-devops:latest  # Tag específico
     container_name: book-service
     ports:
       - "5000:5000"
@@ -28,11 +28,11 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: book-api:compose
+    image: tp-devops:compose
     container_name: test-container
     command: ["pytest", "test_app.py", "-v"]
     depends_on:
-      book-api:
+      tp-devops:
         condition: service_healthy
     networks:
       - book-network
