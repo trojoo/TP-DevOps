@@ -1,5 +1,18 @@
 import os  # Agregar al inicio del archivo
 from flask import Flask, jsonify, request
+import sentry_sdk
+from sentry_sdk.integrations.flask import FlaskIntegration
+from werkzeug.exceptions import HTTPException
+
+# Inicializar Sentry
+sentry_sdk.init(
+    dsn=os.environ.get('SENTRY_DSN'),
+    integrations=[FlaskIntegration()],
+    release=os.environ.get('APP_VERSION', '1.0.0'),
+    traces_sample_rate=1.0,
+    send_default_pii=True,
+    environment=os.environ.get('FLASK_ENV', 'production')
+)
 
 app = Flask(__name__)
 
@@ -11,9 +24,21 @@ books = [
 next_id = 3
 
 # Health Check Endpoint
-@app.route('/health', methods=['GET'])
+@app.route('/health')
 def health_check():
-    return jsonify({"status": "healthy", "message": "La aplicación está funcionando correctamente"}), 200
+    # Verificar conexión a Sentry
+    sentry_ok = False
+    if sentry_sdk.Hub.current.client:
+        try:
+            sentry_sdk.capture_message("Health check test")
+            sentry_ok = True
+        except:
+            pass
+    
+    return jsonify({
+        "status": "healthy",
+        "sentry": "connected" if sentry_ok else "disabled"
+    }), 200
 
 # Obtener todos los libros
 @app.route('/books', methods=['GET'])
@@ -73,15 +98,38 @@ def delete_book(book_id):
         return jsonify({"message": "Libro eliminado correctamente"}), 200
     return jsonify({"error": "Libro no encontrado"}), 404
 
-# Endpoint para generar errores intencionales (para pruebas de monitorización)
+# Endpoint para generar errores intencionales
 @app.route('/error', methods=['GET'])
 def trigger_error():
-    # Generar una excepción de división por cero
-    result = 1 / 0
+    try:
+        # Generar una excepción de división por cero
+        result = 1 / 0
+    except Exception as e:
+        # Capturar y reportar el error a Sentry
+        sentry_sdk.capture_exception(e)
+        return jsonify({"error": str(e)}), 500
+        
     return jsonify({"result": result}), 200
+
+@app.errorhandler(Exception)
+def handle_exception(e):
+    # Reportar a Sentry
+    sentry_sdk.capture_exception(e)
+    
+    # Manejar errores HTTP
+    if isinstance(e, HTTPException):
+        return e
+    
+    # Manejar otros errores
+    return jsonify({"error": "Internal Server Error"}), 500    
 
 
 if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))  # Usar PORT de Render
+    port = int(os.environ.get('PORT', 5000))
     debug = os.getenv('FLASK_ENV') == 'development'
-    app.run(host='0.0.0.0', port=port, debug=debug)
+    
+    # Deshabilitar Sentry en modo desarrollo
+    if debug:
+        sentry_sdk.init(dsn="")
+    
+    app.run(host='0.0.0.0', port=port, debug=debug)    

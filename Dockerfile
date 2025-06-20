@@ -20,10 +20,15 @@ RUN pip install --no-cache-dir --user -r requirements.txt
 # ==================== ETAPA DE PRODUCCIÓN ====================
 FROM python:3.11-slim-bullseye
 
+ARG APP_VERSION=1.0.0
+
 # Configura variables de entorno
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 ENV PORT=5000
+ENV SENTRY_DSN=""
+ENV APP_VERSION=$APP_VERSION  # Usa el argumento aquí
+
 
 # Instala dependencias mínimas del sistema
 RUN apt-get update && apt-get install -y --no-install-recommends curl && \
