@@ -23,7 +23,7 @@ books = [
     {"id": 3, "title": "El Peregrino", "author": "Paulo Coelho"},
     {"id": 4, "title": "Big data con python: Recolección, almacenamiento y proceso", "author": "Adrián Riesco Rodríguez,"}
 ]
-next_id = 3
+next_id = 5
 
 # Health Check Endpoint
 @app.route('/health')
