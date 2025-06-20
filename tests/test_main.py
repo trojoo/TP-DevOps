@@ -85,3 +85,5 @@ def test_error_endpoint(client):
     # Check for specific error message in JSON response
     assert "error" in response.json
     assert "division by zero" in response.json['error']
+
+#Final    
