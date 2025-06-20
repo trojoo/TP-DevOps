@@ -27,8 +27,8 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 ENV PORT=5000
 ENV SENTRY_DSN=""
-ENV APP_VERSION=$APP_VERSION  # Usa el argumento aquí
-
+# Usa el argumento aquí
+ENV APP_VERSION=$APP_VERSION
 
 # Instala dependencias mínimas del sistema
 RUN apt-get update && apt-get install -y --no-install-recommends curl && \
@@ -55,4 +55,4 @@ ENV PATH="/home/appuser/.local/bin:${PATH}"
 EXPOSE $PORT
 
 # Comando para ejecutar la aplicación
-CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:$PORT", "src.main:app"]
+CMD ["sh", "-c", "gunicorn -w 4 -b 0.0.0.0:$PORT src.main:app"]
