@@ -20,17 +20,16 @@ services:
       timeout: 10s
       retries: 3
       start_period: 10s
+    volumes:
+      - ./src:/app/src  # Montar código fuente para desarrollo
     networks:
       - book-network
 
   # Servicio opcional para ejecutar pruebas (ejecutar manualmente)
   test-runner:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: tp-devops:compose
+    image: gonza/tp-devops:latest  # Usar la misma imagen principal
     container_name: test-container
-    command: ["pytest", "test_app.py", "-v"]
+    command: ["pytest", "tests/", "-v"]
     depends_on:
       tp-devops:
         condition: service_healthy

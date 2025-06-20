@@ -1,3 +1,4 @@
+import os  # Agregar al inicio del archivo
 from flask import Flask, jsonify, request
 
 app = Flask(__name__)
@@ -78,12 +79,9 @@ def trigger_error():
     # Generar una excepción de división por cero
     result = 1 / 0
     return jsonify({"result": result}), 200
-        
+
 
 if __name__ == '__main__':
-    env = os.getenv('FLASK_ENV', 'development')
-    
-    # Activa debug solo en desarrollo
-    debug_mode = (env == 'development')
-    
-    app.run(host='0.0.0.0', port=5000, debug=debug_mode)
+    port = int(os.environ.get('PORT', 5000))  # Usar PORT de Render
+    debug = os.getenv('FLASK_ENV') == 'development'
+    app.run(host='0.0.0.0', port=port, debug=debug)

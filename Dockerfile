@@ -7,16 +7,15 @@ ENV PYTHONUNBUFFERED 1
 
 # Instala dependencias del sistema
 RUN apt-get update && \
-    apt-get install -y --no-install-recommends build-essential && \
+    apt-get install -y --no-install-recommends build-essential curl && \
     rm -rf /var/lib/apt/lists/*
 
 # Crea directorio de trabajo
 WORKDIR /app
 
-# Instala dependencias de Python
+# Copia e instala dependencias
 COPY requirements.txt .
 RUN pip install --no-cache-dir --user -r requirements.txt
-
 
 # ==================== ETAPA DE PRODUCCIÓN ====================
 FROM python:3.11-slim-bullseye
@@ -24,24 +23,31 @@ FROM python:3.11-slim-bullseye
 # Configura variables de entorno
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
-ENV PATH="/root/.local/bin:${PATH}"
+ENV PORT=5000
 
-# Crea usuario no-root para mayor seguridad
+# Instala dependencias mínimas del sistema
+RUN apt-get update && apt-get install -y --no-install-recommends curl && \
+    rm -rf /var/lib/apt/lists/*
+
+# Crea usuario no-root
 RUN groupadd -r appuser && useradd -r -g appuser appuser
 
-# Crea directorio de trabajo y establece permisos
+# Crea estructura de directorios
+RUN mkdir -p /app/src && chown -R appuser:appuser /app
 WORKDIR /app
-RUN chown appuser:appuser /app
 USER appuser
 
-# Copia dependencias instaladas desde la etapa de construcción
+# Copia dependencias instaladas
 COPY --chown=appuser:appuser --from=builder /root/.local /home/appuser/.local
-COPY --chown=appuser:appuser . .
 
-# Expone el puerto de la aplicación
-EXPOSE 5000
+# Copia código fuente
+COPY --chown=appuser:appuser src/ ./src
+
+# Añade .local al PATH
+ENV PATH="/home/appuser/.local/bin:${PATH}"
+
+# Expone el puerto
+EXPOSE $PORT
 
 # Comando para ejecutar la aplicación
-CMD ["newrelic-admin", "run-program", "python", "src/main.py"]
-
-
+CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:$PORT", "src.main:app"]
