@@ -17,7 +17,7 @@ sentry_sdk.init(
     attach_stacktrace=True,
     request_bodies="medium",
     send_client_reports=True,
-    traces_sample_rate=1.0
+    traces_sample_rate=1.0,
     environment=os.environ.get('FLASK_ENV', 'production')
 )
 
