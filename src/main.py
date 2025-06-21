@@ -4,13 +4,20 @@ import sentry_sdk
 from sentry_sdk.integrations.flask import FlaskIntegration
 from werkzeug.exceptions import HTTPException
 
+
+APP_VERSION = os.getenv("APP_VERSION", "1.0.0")
+print(f"Initializing Sentry with release: {APP_VERSION}")
+
 # Inicializar Sentry
 sentry_sdk.init(
     dsn=os.environ.get('SENTRY_DSN'),
     integrations=[FlaskIntegration()],
-    release=os.environ.get('APP_VERSION', '1.0.0'),
-    traces_sample_rate=1.0,
-    send_default_pii=True,
+    release=APP_VERSION,
+    auto_session_tracking=True,
+    attach_stacktrace=True,
+    request_bodies="medium",
+    send_client_reports=True,
+    traces_sample_rate=1.0
     environment=os.environ.get('FLASK_ENV', 'production')
 )
 
@@ -34,6 +41,14 @@ def health_check():
         "version": os.getenv("APP_VERSION"),
         "sentry": "configured" if sentry_ok else "missing_dsn"
     }), 200
+
+
+@app.route('/version')
+def show_version():
+    return {
+        "docker_version": os.getenv("APP_VERSION", "missing"),
+        "sentry_release": sentry_sdk.Hub.current.client.options['release'] if sentry_sdk.Hub.current.client else "sentry_not_initialized"
+    }, 200    
 
 # Obtener todos los libros
 @app.route('/books', methods=['GET'])
