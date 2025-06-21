@@ -28,15 +28,11 @@ next_id = 5
 # Health Check Endpoint
 @app.route('/health')
 def health_check():
-    sentry_status = "disabled"
-    if sentry_sdk.Hub.current.client:
-        sentry_status = f"initialized (dsn: {sentry_sdk.Hub.current.client.dsn})"
-    
+    sentry_ok = bool(os.environ.get('SENTRY_DSN'))  # Verifica existencia del DSN
     return jsonify({
         "status": "healthy",
-        "sentry": sentry_status,
-        "python_version": sys.version
-    }), 200      
+        "sentry": "configured" if sentry_ok else "missing_dsn"
+    }), 200
 
 # Obtener todos los libros
 @app.route('/books', methods=['GET'])
