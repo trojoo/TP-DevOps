@@ -28,18 +28,10 @@ next_id = 5
 # Health Check Endpoint
 @app.route('/health')
 def health_check():
-    # Verificar conexión a Sentry
-    sentry_ok = False
-    if sentry_sdk.Hub.current.client:
-        try:
-            sentry_sdk.capture_message("Health check test")
-            sentry_ok = True
-        except:
-            pass
-    
+    sentry_ok = bool(os.environ.get('SENTRY_DSN'))  # Verifica existencia del DSN
     return jsonify({
         "status": "healthy",
-        "sentry": "connected" if sentry_ok else "disabled"
+        "sentry": "configured" if sentry_ok else "missing_dsn"
     }), 200
 
 # Obtener todos los libros
@@ -104,14 +96,11 @@ def delete_book(book_id):
 @app.route('/error', methods=['GET'])
 def trigger_error():
     try:
-        # Generar una excepción de división por cero
-        result = 1 / 0
+        1 / 0
     except Exception as e:
-        # Capturar y reportar el error a Sentry
+        app.logger.error(f"Error captured: {str(e)}")  # Log local
         sentry_sdk.capture_exception(e)
         return jsonify({"error": str(e)}), 500
-        
-    return jsonify({"result": result}), 200
 
 @app.errorhandler(Exception)
 def handle_exception(e):
