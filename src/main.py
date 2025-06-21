@@ -31,8 +31,9 @@ def health_check():
     sentry_ok = bool(os.environ.get('SENTRY_DSN'))  # Verifica existencia del DSN
     return jsonify({
         "status": "healthy",
-        "sentry": "configured" if sentry_ok else "missing_dsn"
-    }), 200
+        "sentry": sentry_status,
+        "python_version": sys.version
+    }), 200   
 
 # Obtener todos los libros
 @app.route('/books', methods=['GET'])
