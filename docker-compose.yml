@@ -6,14 +6,14 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        - APP_VERSION=1.0.0  # Versión específica
-    image: gonza/tp-devops:latest  # Tag específico
+        - APP_VERSION=1.0.0  
+    image: gonza/tp-devops:latest  
     container_name: book-service
     ports:
       - "5000:5000"
     environment:
       - FLASK_ENV=production
-      - SENTRY_DSN=  # Dejar vacío para desarrollo
+      - SENTRY_DSN=  
       - PORT=5000
     restart: unless-stopped
     healthcheck:
@@ -23,13 +23,12 @@ services:
       retries: 3
       start_period: 10s
     volumes:
-      - ./src:/app/src  # Montar código fuente para desarrollo
+      - ./src:/app/src  
     networks:
       - book-network
 
-  # Servicio opcional para ejecutar pruebas (ejecutar manualmente)
   test-runner:
-    image: gonza/tp-devops:latest  # Usar la misma imagen principal
+    image: gonza/tp-devops:latest
     container_name: test-container
     command: ["pytest", "tests/", "-v"]
     depends_on:

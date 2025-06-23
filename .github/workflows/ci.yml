@@ -35,7 +35,7 @@ jobs:
         flake8 src/ tests/ --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
         
     - name: Run unit tests
-      run: pytest tests/ -v  # Ejecutar todos los tests en directorio tests/
+      run: pytest tests/ -v
       
   docker-build-push:
     needs: test-and-lint
@@ -89,16 +89,13 @@ jobs:
                 "pullSecret": "none"
               }
             }' \
-            "https://api.render.com/v1/services/srv-d1alsgemcj7s73fme8l0/deploys"  # TU SERVICE ID AQUÍ
+            "https://api.render.com/v1/services/srv-d1alsgemcj7s73fme8l0/deploys"
             
       - name: Verify deployment
         run: |
-          # Usando TU SERVICE NAME (ej: tp-devops)
           APP_URL="https://${{ secrets.RENDER_SERVICE_NAME }}.onrender.com/health"
           
-          # Esperar 2 minutos (Render free tarda en iniciar)
           echo "Esperando 120 segundos..."
           sleep 120
           
-          # Verificar endpoint de salud
           curl -f "$APP_URL?version=1.0.${{ github.run_number }}" || exit 1  

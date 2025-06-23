@@ -1,4 +1,4 @@
-import os  # Agregar al inicio del archivo
+import os
 from flask import Flask, jsonify, request
 import sentry_sdk
 from sentry_sdk.integrations.flask import FlaskIntegration
@@ -35,10 +35,9 @@ next_id = 5
 # Health Check Endpoint
 @app.route('/health')
 def health_check():
-    sentry_ok = bool(os.environ.get('SENTRY_DSN'))  # Verifica existencia del DSN
+    sentry_ok = bool(os.environ.get('SENTRY_DSN')) 
     return jsonify({
         "status": "healthy",
-        "version": os.getenv("APP_VERSION"),
         "sentry": "configured" if sentry_ok else "missing_dsn"
     }), 200
 
