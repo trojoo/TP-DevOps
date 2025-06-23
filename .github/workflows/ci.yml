@@ -35,7 +35,7 @@ jobs:
         flake8 src/ tests/ --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
         
     - name: Run unit tests
-      run: pytest tests/ -v
+      run: pytest tests/ -v  # Ejecutar todos los tests en directorio tests/
       
   docker-build-push:
     needs: test-and-lint
@@ -95,7 +95,9 @@ jobs:
         run: |
           APP_URL="https://${{ secrets.RENDER_SERVICE_NAME }}.onrender.com/health"
           
-          echo "Esperando 120 segundos..."
-          sleep 120
+          # Esperar 3 minutos (Render free tarda en iniciar)
+          echo "Esperando 180 segundos..."
+          sleep 180
           
+          # Verificar endpoint de salud
           curl -f "$APP_URL?version=1.0.${{ github.run_number }}" || exit 1  
