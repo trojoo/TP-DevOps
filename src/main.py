@@ -23,6 +23,7 @@ sentry_sdk.init(
 
 app = Flask(__name__)
 
+
 # Base de datos en memoria
 books = [
     {"id": 1, "title": "El Principito", "author": "Antoine de Saint-Exupéry"},
