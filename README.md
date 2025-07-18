@@ -17,6 +17,7 @@ FUNCIONALIDADES PRINCIPALES
 - Simulación de errores (/error)
 - Monitoreo de errores con Sentry
 
+
 ESTRUCTURA DEL PROYECTO
 ------------------------
 .github/workflows/      → Workflows de GitHub Actions (CI)
