@@ -55,6 +55,17 @@ def show_version():
 def get_books():
     return jsonify(books)
 
+
+# Nuevo endpoint: Obtener libro aleatorio
+@app.route('/books/random', methods=['GET'])
+def get_random_book():
+    if not books:
+        return jsonify({"error": "No hay libros disponibles"}), 404
+    
+    random_book = random.choice(books)
+    return jsonify(random_book)
+
+
 # Obtener un libro por ID
 @app.route('/books/<int:book_id>', methods=['GET'])
 def get_book(book_id):
